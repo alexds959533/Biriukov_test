@@ -10,9 +10,9 @@ class CityAdmin(admin.ModelAdmin):
 @admin.register(Street)
 class StreetAdmin(admin.ModelAdmin):
     list_display = ('name', 'city')
-    list_filter = ('name', 'city')
+    list_filter = ('city',)
 
 
 @admin.register(Shop)
 class ShopAdmin(admin.ModelAdmin):
-    list_display = ('name', 'street', 'city')
+    list_display = ('street', 'city')
