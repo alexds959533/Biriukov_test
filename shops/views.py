@@ -1,9 +1,8 @@
 from datetime import datetime
 
 from rest_framework import status
-from rest_framework import viewsets
+from rest_framework import viewsets, generics
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
 
@@ -13,13 +12,10 @@ from .serializers import CitySerializer, ShopSerializer, ShopCreateSerializer,\
 from .service import ShopFilter
 
 
-class CityView(APIView):
+class CityView(generics.ListAPIView):
     """Вывод списка городов"""
-
-    def get(self, request):
-        cities = City.objects.all()
-        serializer = CitySerializer(cities, many=True)
-        return Response({"object": serializer.data})
+    queryset = City.objects.all()
+    serializer_class = CitySerializer
 
 
 class ShopView(viewsets.ModelViewSet):
@@ -64,10 +60,10 @@ class ShopView(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
-class StreetView(APIView):
+class StreetView(generics.ListAPIView):
     """Вывод списка улиц определенного города"""
 
-    def get(self, request, city_id):
-        streets = Street.objects.filter(city_id=city_id)
-        serializer = StreetSerializer(streets, many=True)
-        return Response({"object": serializer.data})
+    serializer_class = StreetSerializer
+
+    def get_queryset(self):
+        return Street.objects.filter(city_id=self.kwargs.get('city_id'))
